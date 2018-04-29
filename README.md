@@ -1,6 +1,6 @@
 # RadAA
 Code and data for the MS: 
-Inge Seim, Andrew M. Baker, Lisa K. Chopin. *RadAA: a command-line tool for identification of radical amino acid changes in multiple sequence alignments*
+Inge Seim, Andrew M. Baker, Lisa K. Chopin. *RadAA: a command-line tool for identification of radical amino acid changes in multiple sequence alignments*.
 
 **Summary**:
 
