@@ -97,7 +97,6 @@ system("clear") ;
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # STEP 1
 ################################################################################################################################################################
-# removeheader.pl - this script does something awful.
 # It is supposed to remove the headers of remove the headers of FASTA formatted files
 ################################################################################################################################################################
 my $seqnum = 0;
@@ -114,7 +113,6 @@ system("mkdir -p ./results");
 $filename =~ s/(.+)\.[^.]+$/$1/;
 
 readFasta($ARGV[0]); 
-# Read each file in as somethingawful.pl "filename" . Batch this script to analyse 1000s of Clustal alignments using bash, or similar.
 ################################################################################################################################################################
 # SUBROUTINE shamelessly stolen from Yu-Wei Wu's (Indiana University) blog 
 # http://yuweibioinfo.blogspot.com/2008/10/perl-fasta-sequence-parser.html
@@ -232,17 +230,9 @@ close FILE ;
 
 
 ################################################################################################################################################################
-# AAtypesort.pl - this script does something awful.
-# By Inge Seim
-# 6/2012
-#
 # This script will only output AA residues of target species (plural) that are of a different 
 # "type"
 #  Groups AAs into acidic (ED), basic (KHR), cysteine (C) and other (STYNQGAVLIFPMW) 
-#
-#   to run, type AAtypesort.pl [filename] [#target1 [#target2] etc
-#   
-#    
 ################################################################################################################################################################
 #@ system("mkdir results && cd ./results");  
 #@ system("mkdir results/radical");  
@@ -254,6 +244,9 @@ system("clear");
 
 my $inputfile = "./tmp/transposed/$filename.txt" ;
 
+
+# RadAA supports up to 50 target strata (FASTA header #) at the moment
+# re-write as a function later...
 my $targetinput = $ARGV[1]-1 ;  # e.g. if 1, it is 0
 my $targetinput2 = $ARGV[2]-1 ;  # e.g. if 2, it is 1
 my $targetinput3 = $ARGV[3]-1 ;  
@@ -264,9 +257,61 @@ my $targetinput7 = $ARGV[7]-1 ;
 my $targetinput8 = $ARGV[8]-1 ;  
 my $targetinput9 = $ARGV[9]-1 ;  
 my $targetinput10 = $ARGV[10]-1 ;  
-
+my $targetinput11 = $ARGV[11]-1 ;  
+my $targetinput12 = $ARGV[12]-1 ;  
+my $targetinput13 = $ARGV[13]-1 ;  
+my $targetinput14 = $ARGV[14]-1 ;  
+my $targetinput15 = $ARGV[15]-1 ;  
+my $targetinput16 = $ARGV[16]-1 ;  
+my $targetinput17 = $ARGV[17]-1 ;  
+my $targetinput18 = $ARGV[18]-1 ;  
+my $targetinput19 = $ARGV[19]-1 ;  
+my $targetinput20 = $ARGV[20]-1 ;  
+my $targetinput21 = $ARGV[21]-1 ;  
+my $targetinput22 = $ARGV[22]-1 ;  
+my $targetinput23 = $ARGV[23]-1 ;  
+my $targetinput24 = $ARGV[24]-1 ;  
+my $targetinput25 = $ARGV[25]-1 ;  
+my $targetinput26 = $ARGV[26]-1 ;  
+my $targetinput27 = $ARGV[27]-1 ;  
+my $targetinput28 = $ARGV[28]-1 ;  
+my $targetinput29 = $ARGV[29]-1 ;  
+my $targetinput30 = $ARGV[30]-1 ;  
+my $targetinput31 = $ARGV[41]-1 ;  
+my $targetinput32 = $ARGV[42]-1 ;  
+my $targetinput33 = $ARGV[43]-1 ;  
+my $targetinput34 = $ARGV[44]-1 ;  
+my $targetinput35 = $ARGV[45]-1 ;  
+my $targetinput36 = $ARGV[46]-1 ;  
+my $targetinput37 = $ARGV[47]-1 ;  
+my $targetinput38 = $ARGV[48]-1 ;  
+my $targetinput39 = $ARGV[49]-1 ;  
+my $targetinput40 = $ARGV[40]-1 ;  
+my $targetinput31 = $ARGV[31]-1 ;  
+my $targetinput32 = $ARGV[32]-1 ;  
+my $targetinput33 = $ARGV[33]-1 ;  
+my $targetinput34 = $ARGV[34]-1 ;  
+my $targetinput35 = $ARGV[35]-1 ;  
+my $targetinput36 = $ARGV[36]-1 ;  
+my $targetinput37 = $ARGV[37]-1 ;  
+my $targetinput38 = $ARGV[38]-1 ;  
+my $targetinput39 = $ARGV[39]-1 ;  
+my $targetinput40 = $ARGV[40]-1 ;  
+my $targetinput41 = $ARGV[41]-1 ;  
+my $targetinput42 = $ARGV[42]-1 ;  
+my $targetinput43 = $ARGV[43]-1 ;  
+my $targetinput44 = $ARGV[44]-1 ;  
+my $targetinput45 = $ARGV[45]-1 ;  
+my $targetinput46 = $ARGV[46]-1 ;  
+my $targetinput47 = $ARGV[47]-1 ;  
+my $targetinput48 = $ARGV[48]-1 ;  
+my $targetinput49 = $ARGV[49]-1 ;  
+my $targetinput50 = $ARGV[50]-1 ;  
 #@ print $targetinput . " is target input#1 number used to call the array here" . "\n" ;
-$inputFASTAtest=$targetinput ;
+# $inputFASTAtest=$targetinput ;
+# $targetinput 
+# $targetinput0 is 0 (input was 1)
+# $targetinput2 is 20 (input was 21)
 
 
 my @data = "" ;
