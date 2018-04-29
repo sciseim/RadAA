@@ -71,7 +71,7 @@ if ($options{v})
 
 sub do_version {
   system("clear") ;
-  print "RadAA v2.0 (March 2018) by Inge Seim (inge.seim@gmail.com)\n";
+  print "RadAA v2.0 (April 2018) by Inge Seim (inge.seim@gmail.com)\n";
 }
 # 000000000000000000000000000000000000
 # 000000000000000000000000000000000000
