@@ -12,7 +12,7 @@ use Getopt::Long ;
 ################################################################################################################################################################
 # RadAA.pl 
 # By Inge Seim
-# 3/2018
+# 4/2018
 ################################################################################################################################################################
 # usage perl RadAA.pl NM_001112706.fa.fa 1 
 # RadAA.pl <FASTA> species1 species2 species3 
@@ -1304,20 +1304,23 @@ if ($nontargetbaseaccept == 1              # NON-TARGET
 #@    	print "\n" . "this residue type is unique to your target species:" ;
 #@    	print "NT basic, T acidic!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-          
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~         
           open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
           # ORIGINAL: print FILE "NT basic" . "\t" . $position . "\t" . "T acidic" . "\n";   
         print FILE "NT basic" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
@@ -1338,14 +1341,25 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
 #@    	print "NT basic, T other!" . "\n" ; 
 #@    	print color 'reset';
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# added March 2018       
-      # only keep unique AAs (so R, not RRRRR)
-      my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-      my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# basic	187	other	RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR187SS
+# basic	197	other	RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRKRRRRRRRRRRRRRRRRRR197GG
+# ok, so 197 has one K-event, 187 only Rs       
+
        # print "the target is:" . "\t" . $AAtarget . "\n" ;
        # basic    187    other    R     S
        # basic    197    other    K    G
@@ -1368,20 +1382,23 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
    && $targetcysteineaccept == 1             # TARGET
    )
    {
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-             open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~             open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          print FILE "NT basic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
 
          close FILE
@@ -1410,20 +1427,23 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
 #@    	print "\n" . "this residue type is unique to your target species:" ;
 #@    	print "NT acidic, T basic!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\n";   
          print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
 
@@ -1442,20 +1462,23 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
 #@    	print "\n" . "this residue type is unique to your target species:" ;
 #@    	print "NT acidic, T other!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\n";
          print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
          close FILE
@@ -1473,20 +1496,23 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
    	print "\n" . "this residue type is unique to your target species:" ;
    	print "NT acidic, T cysteine!" . "\n" ; 
    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL:  print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\n";   
          print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
 
@@ -1520,20 +1546,23 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
 #@    	print color 'bold blue' ;
 #@    	print "NT cysteine, T acidic!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\n"; 
          print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
         
@@ -1554,20 +1583,23 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
 #@    	print color 'bold blue' ;
 #@    	print "cysteine, T basic!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
         # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\n"; 
          print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
 
@@ -1585,20 +1617,23 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
 #@   	print color 'bold blue' ;
 #@   	print "NT cysteine, T other!" . "\n" ; 
 #@   	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\n";   
           print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
          
@@ -1630,20 +1665,23 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
 #@    	print color 'bold blue' ;
 #@    	print "NT other, T acidic!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
 
           # ORIGINAL:          print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\n";   
           print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
@@ -1665,20 +1703,23 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
 #@         print color 'bold blue' ;
 #@         print "NT other, T basic!" . "\n" ; 
 #@         print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
         # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\n";   
                  print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
 
@@ -1698,20 +1739,23 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
 #@         print color 'bold blue' ;
 #@    	print "NT other, T other!" . "\n" ; 
 #@    	print color 'reset';
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       # added March 2018
-       # only keep unique AAs (so R, not RRRRR)
-       my @ntAAs = grep { ! $seen{ $_ }++ } @valuesnotargets;
-       my @tAAs = grep { ! $seen{ $_ }++ } @targetarray;
-       my $AAtarget = "@tAAs" ;
-       $AAtarget =~ s/^\s+|\s+$//g;
-       my $AAnotarget = "@ntAAs" ;
-       $AAnotarget =~ s/^\s+|\s+$//g;
-       # print "the target is:" . "\t" . $AAtarget . "\n" ;
-       # basic    187    other    R     S
-       # basic    197    other    K    G
-       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# added April 2018       
+# only keep unique AAs (so R, not RRRRR)
+# fix April 2018
+# white spaces sometime resulted in blank residues...       
+      my $AAtarget = "@targetarray" ;
+      # remove white-space in the string
+      $AAtarget =~ s/\s//g;
+      # keep unique residues
+      $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+      my $AAnotarget = "@valuesnotargets" ;
+      # remove white-space in the string
+      $AAnotarget =~ s/\s//g;
+      # keep unique residues
+      $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\n";   
         print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
 
