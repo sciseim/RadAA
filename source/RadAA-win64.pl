@@ -12,7 +12,7 @@ use Getopt::Long ;
 ################################################################################################################################################################
 # RadAA.pl 
 # By Inge Seim
-# 4/2018
+# 5/2018
 ################################################################################################################################################################
 # usage perl RadAA.pl NM_001112706.fa.fa 1 
 # RadAA.pl <FASTA> species1 species2 species3 
@@ -71,7 +71,7 @@ if ($options{v})
 
 sub do_version {
   system("cls") ;
-  print "RadAA v2.0 (April 2018) by Inge Seim (inge.seim@gmail.com)\n";
+  print "RadAA v2.1 (May 2018) by Inge Seim (inge.seim@gmail.com)\n";
 }
 # 000000000000000000000000000000000000
 # 000000000000000000000000000000000000
@@ -107,9 +107,36 @@ my $filename = $ARGV[0];
 system("mkdir tmp\\transposed");
 system("mkdir results");
 
-
 # remove file extension
 $filename =~ s/(.+)\.[^.]+$/$1/;
+
+# SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+# Calculate Shannon Entropy
+sub entropy_shannon {
+	my ($seq) = @_;
+	my %seq;
+	for (my $i = 0; $i < length($seq); $i++) {
+		my $AA = substr($seq, $i, 1);
+		$seq{AA}{$AA}++;
+		$seq{tot}++;
+	}
+	foreach my $AA (keys %{$seq{AA}}) {
+		$seq{AA}{$AA} /= $seq{tot};
+		$seq{ent} += -1 * $seq{AA}{$AA} * (log($seq{AA}{$AA}) / log (2));
+	}
+	return($seq{ent});
+}
+# SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+
+
+
+
+
+
+
+
+
+
 
 readFasta($ARGV[0]); 
 ################################################################################################################################################################
@@ -236,7 +263,7 @@ close FILE ;
 #@ system("mkdir results && cd ./results");  
 #@ system("mkdir results/radical");  
 # system("mkdir results/conservative");  
-system("cls");
+system("clear");
 
 # Prepare the output file name and directory here
 #@ my $filename = $ARGV[0] ;
@@ -356,6 +383,18 @@ my $indexstring = $data[$index] ;
 
 # chuck it into an array
 my @values = split('', $data[$index]);
+
+
+# the entire string
+my $entropyarray = "@values" ; # call at the start to keep targetAA's too! 
+# Shannon's entropy
+$entropyarray =~ s/\s//g; # remove white space
+# print $entropyarray . "\n" ; # a string
+my $shannon_entropy = entropy_shannon($entropyarray) ;
+$shannon_entropy = sprintf("%.2f", $shannon_entropy); # two sig.figs
+# print $shannon_entropy . "\n" ; # a string
+
+
 
 # print $data[0] . " is the first element of the array data" . "\n" ;
 # print $values[0] . " is the first element of the array values" . "\n" ;
@@ -906,6 +945,12 @@ if ($targetinput50AA ne "") {
 push(@targetarray, $targetinput50AA); }
 
 
+# my $entropyarrayTARGETONLY = "@targetarray" ; # call at the start to keep targetAA's too! 
+
+
+
+
+
 # TESTING 
 # print @targetarray[0] . " target" . "\n" ;
 # print @targetarray[1] . " target" . "\n" ;
@@ -1321,11 +1366,10 @@ $targetcysteineaccept = "1" ;
 
 
 
-    
-    
-    
-    
-    
+
+        
+
+      
     
     
     
@@ -1367,7 +1411,7 @@ if ($nontargetbaseaccept == 1              # NON-TARGET
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~         
           open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
           # ORIGINAL: print FILE "NT basic" . "\t" . $position . "\t" . "T acidic" . "\n";   
-        print FILE "NT basic" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+        print FILE "NT basic" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
         close FILE
   
    }
@@ -1410,7 +1454,7 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
         # ORIGINAL: print FILE "NT basic" . "\t" . $position . "\t" . "T other" . "\n";   
-       print FILE "basic" . "\t" . $position . "\t" . "other" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+       print FILE "basic" . "\t" . $position . "\t" . "other" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
                 close FILE
    }
     # ########################################################################################################################
@@ -1443,7 +1487,7 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~             open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-         print FILE "NT basic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+         print FILE "NT basic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
       }
@@ -1489,7 +1533,7 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\n";   
-         print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+         print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
    
@@ -1524,7 +1568,7 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\n";
-         print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+         print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
          close FILE
    
    }
@@ -1558,7 +1602,7 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL:  print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\n";   
-         print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+         print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
    
@@ -1608,7 +1652,7 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\n"; 
-         print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+         print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
         
          close FILE
    
@@ -1645,7 +1689,7 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
         # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\n"; 
-         print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+         print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
    
@@ -1679,7 +1723,7 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\n";   
-          print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+          print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
          
          close FILE
         
@@ -1728,7 +1772,7 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
 
           # ORIGINAL:          print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\n";   
-          print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+          print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
 
          close FILE
@@ -1765,7 +1809,7 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
         # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\n";   
-                 print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+                 print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
    
@@ -1801,7 +1845,7 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\n";   
-        print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\n";
+        print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
 
          close FILE
@@ -1810,8 +1854,10 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
 # need position information! 
 #@ print "\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#" . "\n" ;
 
+
 # END OF THE BIG LOOP!
 }
+
 
 
 
@@ -1833,7 +1879,7 @@ system("cls") ;
 # print $inputFASTAtest . "\n" ;
 if ($inputFASTAtest == -1) 
 {print "\nERROR: No input species given\n" ;}
-
-
-
 } # END OF sub_do_input
+
+
+
