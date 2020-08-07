@@ -10,12 +10,12 @@ use Getopt::Long ;
 # or its path: perldoc -l Getopt::Long
 
 ################################################################################################################################################################
-# RadAA.pl 
+# radAA.pl 
 # By Inge Seim
 # 5/2018
 ################################################################################################################################################################
 # usage perl RadAA.pl NM_001112706.fa.fa 1 
-# RadAA.pl <FASTA> species1 species2 species3 
+# radAA.pl -i <FASTA> species1 species2 species3 
 
 #@ system("rm ./tmp/*.txt") ;
 #@ system("rm ./tmp/transposed/") ;
@@ -53,7 +53,7 @@ if ($options{h})
 
 sub do_help {
   system("clear") ;
-  print "usage: RadAA.pl <FASTA> species1 .. (species)n\nSynopsis: identify radical amino-acid changes unique to one or more sequences in a multiple-sequence alignment\nOptions:\n-i\t<FASTA> input file\n-h\thelp\n-v\tversion\n";
+  print "usage: RadAA.pl -i <FASTA> species1 .. (species)n\nSynopsis: identify radical amino-acid changes unique to one or more sequences in a multiple-sequence alignment\nOptions:\n-i\t<FASTA> input file\n-h\thelp\n-v\tversion\n";
 }
 # 000000000000000000000000000000000000
 # 000000000000000000000000000000000000
@@ -71,7 +71,7 @@ if ($options{v})
 
 sub do_version {
   system("clear") ;
-  print "RadAA v2.1 (May 2018) by Inge Seim (inge.seim@gmail.com)\n";
+  print "RadAA v2.2 (Aug 2020) by Inge Seim (inge.seim@gmail.com)\n";
 }
 # 000000000000000000000000000000000000
 # 000000000000000000000000000000000000
@@ -1069,7 +1069,7 @@ foreach my $index (0 .. $#valuesnotargets) {
 #@ print $NTacidhits . " out of " . $valuesnotargetsnumber . " *non-targets* are acidic" . "\n" ;
 
 if ($NTacidhits != $valuesnotargetsnumber) {
-$nontargetacidaccept = "0" ;   
+$nontargetacidaccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1077,7 +1077,7 @@ $nontargetacidaccept = "0" ;
 }  
 
 if ($NTacidhits == $valuesnotargetsnumber) {
-$nontargetacidaccept = "1" ;   
+$nontargetacidaccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
@@ -1104,7 +1104,7 @@ foreach my $index (0 .. $#valuesnotargets) {
 #@  print $NTbasichits . " out of " . $valuesnotargetsnumber . " *non-targets* are basic" . "\n" ;
 
 if ($NTbasichits != $valuesnotargetsnumber) {
-$nontargetbaseaccept = "0" ;   
+$nontargetbaseaccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1112,7 +1112,7 @@ $nontargetbaseaccept = "0" ;
 }  
 
 if ($NTbasichits == $valuesnotargetsnumber) {
-$nontargetbaseaccept = "1" ;   
+$nontargetbaseaccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
@@ -1126,9 +1126,8 @@ $nontargetbaseaccept = "1" ;
 # STYNQGAVLIFPMW
 foreach my $index (0 .. $#valuesnotargets) {
 	
-		 if (
-		 	$valuesnotargets[$index] eq $aaS
-		 or $valuesnotargets[$index] eq $aaT 
+		 if ($valuesnotargets[$index] eq $aaS 
+		 or $valuesnotargets[$index] eq $aaT
 		 or $valuesnotargets[$index] eq $aaY 
 		 or $valuesnotargets[$index] eq $aaN 
 		 or $valuesnotargets[$index] eq $aaQ 
@@ -1136,24 +1135,23 @@ foreach my $index (0 .. $#valuesnotargets) {
 		 or $valuesnotargets[$index] eq $aaA 
 		 or $valuesnotargets[$index] eq $aaV 
 		 or $valuesnotargets[$index] eq $aaL 
-		 or $valuesnotargets[$index] eq $aaI
-		 or $valuesnotargets[$index] eq $aaF
-		 or $valuesnotargets[$index] eq $aaP
-		 or $valuesnotargets[$index] eq $aaM
-		 or $valuesnotargets[$index] eq $aaW
-		 ) {  
-		 # print "non-targets are all others" . "\n" ;
+		 or $valuesnotargets[$index] eq $aaI 
+		 or $valuesnotargets[$index] eq $aaF 
+		 or $valuesnotargets[$index] eq $aaP 
+		 or $valuesnotargets[$index] eq $aaM 
+		 or $valuesnotargets[$index] eq $aaW) {  
+		 # print "non-targets are all basic" . "\n" ;
          my $finalcount = $NTotherhits++;
           
-     } 
+     }
 
 
 } # end of this for each
-# print $NTotherhits . " is the number of hits" . "\n" ;
-#@  print $NTotherhits . " out of " . $valuesnotargetsnumber . " *non-targets* are \"other\"" . "\n" ;
+# print $NTbasichits . " is the number of hits" . "\n" ;
+#@  print $NTbasichits . " out of " . $valuesnotargetsnumber . " *non-targets* are basic" . "\n" ;
 
 if ($NTotherhits != $valuesnotargetsnumber) {
-$nontargetotheraccept = "0" ;   
+$nontargetotheraccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1161,16 +1159,21 @@ $nontargetotheraccept = "0" ;
 }  
 
 if ($NTotherhits == $valuesnotargetsnumber) {
-$nontargetotheraccept = "1" ;   
+$nontargetotheraccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
 #@ print color 'reset';
 } 
 
-
 # 0 is No, 1 is Yes
 # ~~~~~~~~~~ END OF other ~~~~~~~~~~
+
+
+
+
+
+
 
 # ~~~~~~~~~~ cysteine ~~~~~~~~~~
 foreach my $index (0 .. $#valuesnotargets) {
@@ -1184,11 +1187,11 @@ foreach my $index (0 .. $#valuesnotargets) {
 
 
 } # end of this for each
-# print $NTchits . " is the number of hits" . "\n" ;
-#@  print $NTchits . " out of " . $valuesnotargetsnumber . " *non-targets* harbour cysteine" . "\n" ;
+print $NTchits . " is the number of hits" . "\n" ;
+print $NTchits . " out of " . $valuesnotargetsnumber . " *non-targets* harbour cysteine" . "\n" ;
 
 if ($NTchits != $valuesnotargetsnumber) {
-$nontargetcysteineaccept = "0" ;   
+$nontargetcysteineaccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1196,7 +1199,7 @@ $nontargetcysteineaccept = "0" ;
 }  
 
 if ($NTchits == $valuesnotargetsnumber) {
-$nontargetcysteineaccept = "1" ;   
+$nontargetcysteineaccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
@@ -1206,6 +1209,21 @@ $nontargetcysteineaccept = "1" ;
 # 0 is No, 1 is Yes
 # ~~~~~~~~~~ END OF cysteine ~~~~~~~~~~
 #####  END OF THE NON-TARGETS ###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # START OF TARGET
 
@@ -1225,7 +1243,7 @@ foreach my $index (0 .. $#targetarray) {
 #@  print $Tacidhits . " out of " . $targetarraynumber . " *targets* are acidic" . "\n" ;
 
 if ($Tacidhits != $targetarraynumber) {
-$targetacidaccept = "0" ;   
+$targetacidaccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1233,7 +1251,7 @@ $targetacidaccept = "0" ;
 }  
 
 if ($Tacidhits == $targetarraynumber) {
-$targetacidaccept = "1" ;   
+$targetacidaccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
@@ -1260,7 +1278,7 @@ foreach my $index (0 .. $#targetarray) {
 #@  print $Tbasichits . " out of " . $targetarraynumber . " *targets* are basic" . "\n" ;
 
 if ($Tbasichits != $targetarraynumber) {
-$targetbaseaccept = "0" ;   
+$targetbaseaccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1268,7 +1286,7 @@ $targetbaseaccept = "0" ;
 }  
 
 if ($Tbasichits == $targetarraynumber) {
-$targetbaseaccept = "1" ;   
+$targetbaseaccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
@@ -1280,38 +1298,44 @@ $targetbaseaccept = "1" ;
 # 0 is No, 1 is Yes
 # ~~~~~~~~~~ END OF basic ~~~~~~~~~~
 
+
+
+
+
+
+
+
+
 # ~~~~~~~~~~ other ~~~~~~~~~~ 
 # STYNQGAVLIFPMW
 foreach my $index (0 .. $#targetarray) {
 	
-		 if (
-		 	$targetarray[$index] eq $aaS
-		 or $targetarray[$index] eq $aaT 
+		 if ($targetarray[$index] eq $aaS 
+		 or $targetarray[$index] eq $aaT
 		 or $targetarray[$index] eq $aaY 
-		 or $targetarray[$index] eq $aaN 
+		 or $targetarray[$index] eq $aaN
 		 or $targetarray[$index] eq $aaQ 
 		 or $targetarray[$index] eq $aaG 
 		 or $targetarray[$index] eq $aaA 
 		 or $targetarray[$index] eq $aaV 
 		 or $targetarray[$index] eq $aaL 
-		 or $targetarray[$index] eq $aaI
-		 or $targetarray[$index] eq $aaF
-		 or $targetarray[$index] eq $aaP
-		 or $targetarray[$index] eq $aaM
-		 or $targetarray[$index] eq $aaW
-		 ) {  
-		 # print "targets are all others" . "\n" ;
+		 or $targetarray[$index] eq $aaI 
+		 or $targetarray[$index] eq $aaF 
+		 or $targetarray[$index] eq $aaP 
+		 or $targetarray[$index] eq $aaM 
+		 or $targetarray[$index] eq $aaW) {  
+		 # print "targets are all basic" . "\n" ;
          my $finalcount = $Totherhits++;
           
-     } 
+     }
 
 
 } # end of this for each
-# print $Totherhits . " is the number of hits" . "\n" ;
-#@  print $Totherhits . " out of " . $targetarraynumber . " *targets* are \"other\"" . "\n" ;
+# print $Tbasichits . " is the number of hits" . "\n" ;
+#@  print $Tbasichits . " out of " . $targetarraynumber . " *targets* are basic" . "\n" ;
 
 if ($Totherhits != $targetarraynumber) {
-$targetotheraccept = "0" ;   
+$targetotheraccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1319,15 +1343,25 @@ $targetotheraccept = "0" ;
 }  
 
 if ($Totherhits == $targetarraynumber) {
-$targetotheraccept = "1" ;   
+$targetotheraccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
 #@ print color 'reset';
 } 
 
+
+
 # 0 is No, 1 is Yes
 # ~~~~~~~~~~ END OF other ~~~~~~~~~~
+
+
+
+
+
+
+
+
 
 # ~~~~~~~~~~ cysteine ~~~~~~~~~~
 foreach my $index (0 .. $#targetarray) {
@@ -1341,11 +1375,11 @@ foreach my $index (0 .. $#targetarray) {
 
 
 } # end of this for each
-# print $Tchits . " is the number of hits" . "\n" ;
-#@  print $Tchits . " out of " . $targetarraynumber . " *targets* harbour cysteine" . "\n" ;
+ print $Tchits . " is the number of hits" . "\n" ;
+ print $Tchits . " out of " . $targetarraynumber . " *targets* harbour cysteine" . "\n" ;
 
 if ($Tchits != $targetarraynumber) {
-$targetcysteineaccept = "0" ;   
+$targetcysteineaccept = 0 ;   
 #@ print "not the same type of residue: " ;
 #@ print color 'red' ;
 #@ print " *FAIL*!" . "\n" ;
@@ -1353,7 +1387,7 @@ $targetcysteineaccept = "0" ;
 }  
 
 if ($Tchits == $targetarraynumber) {
-$targetcysteineaccept = "1" ;   
+$targetcysteineaccept = 1 ;   
 #@ print "all the same type of residue: " ;
 #@ print color 'green' ;
 #@ print " *PASS*!" . "\n" ;
@@ -1371,11 +1405,19 @@ $targetcysteineaccept = "1" ;
         
 
       
+   
     
     
     
-    
-    
+
+
+
+
+
+
+
+
+
     
     
 # Comparison time
@@ -1418,11 +1460,13 @@ if ($nontargetbaseaccept == 1              # NON-TARGET
    }
 
 
+
+
     # ########################################################################################################################
     # ########################################################################################################################
 
 # NT basic, T other
-elsif ($nontargetbaseaccept == 1              # NON-TARGET  
+if ($nontargetbaseaccept == 1              # NON-TARGET  
    && $targetotheraccept >= 1             # TARGET
    )
    {
@@ -1465,9 +1509,13 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
     
     # ########################################################################################################################
     # ########################################################################################################################
-    
+ 
+print "nontargetbaseaccept:" . $nontargetbaseaccept . "\n" ;
+print "targetcysteineaccept:" . $nontargetbaseaccept . "\n" ;
+
+
 # NT basic, T cysteine 
-elsif ($nontargetbaseaccept == 1              # NON-TARGET  
+if ($nontargetbaseaccept == 1              # NON-TARGET  
    && $targetcysteineaccept == 1             # TARGET
    )
    {
@@ -1479,15 +1527,30 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
       my $AAtarget = "@targetarray" ;
       # remove white-space in the string
       $AAtarget =~ s/\s//g;
+
+
+
       # keep unique residues
       $AAtarget =~ s[(.)(?=.*?\1)][]g;
+
+
 
       my $AAnotarget = "@valuesnotargets" ;
       # remove white-space in the string
       $AAnotarget =~ s/\s//g;
+
+print "AAtarget:" . $AAtarget . "\n" ;
+print "AAnotarget:" . $AAnotarget . "\n" ;
+
+
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
+print "AAnotarget:" . $AAnotarget . "\n" ;
+print  "NT basic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~             open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          print FILE "NT basic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
@@ -1509,7 +1572,7 @@ elsif ($nontargetbaseaccept == 1              # NON-TARGET
 ################################################
 
 # NT acidic, T basic 
-elsif ($nontargetacidaccept == 1              # NON-TARGET  
+if ($nontargetacidaccept == 1              # NON-TARGET  
    && $targetbaseaccept == 1             # TARGET
    )
    {
@@ -1533,7 +1596,8 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-         # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\n";   
+ open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+        # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\n";   
          print FILE "NT acidic" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
@@ -1568,6 +1632,7 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
          # ORIGINAL print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\n";
          print FILE "NT acidic" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
          close FILE
@@ -1602,7 +1667,8 @@ elsif ($nontargetacidaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-         # ORIGINAL:  print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\n";   
+ open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+        # ORIGINAL:  print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\n";   
          print FILE "NT acidic" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
@@ -1652,7 +1718,8 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-         # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\n"; 
+ open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+        # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\n"; 
          print FILE "NT cysteine" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
         
          close FILE
@@ -1689,7 +1756,8 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-        # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\n"; 
+ open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+       # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\n"; 
          print FILE "NT cysteine" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
          close FILE
@@ -1723,7 +1791,8 @@ elsif ($nontargetcysteineaccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-         # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\n";   
+ open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+        # ORIGINAL print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\n";   
           print FILE "NT cysteine" . "\t" . $position . "\t" . "T other" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
          
          close FILE
@@ -1771,6 +1840,7 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
 
           # ORIGINAL:          print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\n";   
           print FILE "NT other" . "\t" . $position . "\t" . "T acidic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
@@ -1809,6 +1879,7 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
         # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\n";   
                  print FILE "NT other" . "\t" . $position . "\t" . "T basic" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
@@ -1845,7 +1916,8 @@ elsif ($nontargetotheraccept == 1              # NON-TARGET
       # keep unique residues
       $AAnotarget =~ s[(.)(?=.*?\1)][]g; # remove all duplicate residues, not just adjacent ones!
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                   open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
-         # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\n";   
+ open FILE, ">>./results/$filename.txt" ;  #open for write, append since we want to include # comparisons from the start to the end of the @data
+        # ORIGINAL: print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\n";   
         print FILE "NT other" . "\t" . $position . "\t" . "T cysteine" . "\t" . $AAnotarget . $position . $AAtarget . "\t" . $shannon_entropy .  "\n";
 
 
@@ -1874,7 +1946,7 @@ system("rm -fr ./tmp") ;
 #@ system("rm *fa.noheader.txt") ;
 
 # CLEAR AT THE END
-system("clear") ;
+system("clear") ;  # 070820
 
 # OUTPUT AN ERROR IF NO INPUT SPECIES
 # print $inputFASTAtest . "\n" ;
